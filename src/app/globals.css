@@ -1,0 +1,491 @@
+/* stylelint-disable */
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0f172a;
+  --color-foreground: #f8fafc;
+  
+  --color-card: #1e293b;
+  --color-card-foreground: #f8fafc;
+
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  
+  --color-secondary: #334155;
+  --color-secondary-foreground: #f1f5f9;
+
+  --color-accent: #8b5cf6;
+  --color-accent-foreground: #ffffff;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --color-success: #10b981;
+  --color-success-foreground: #ffffff;
+
+  --color-border: #334155;
+  --color-input: #1e293b;
+  --color-ring: #3b82f6;
+  
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.25rem;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(30, 41, 59, 0.7);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .glass-card {
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Label Print specific utility */
+  
+  /* 1. Base screen styles for the floating paper sheet */
+  .report-screen-card {
+    background: #ffffff;
+    color: #000000;
+    max-width: 950px; /* Generous width for perfect screen viewing */
+    margin: 24px auto;
+    padding: 35px; /* Generous padding on screen */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Premium soft shadow */
+    font-family: 'Cambria', serif !important;
+    box-sizing: border-box;
+  }
+
+  .report-screen-card .section-card {
+    border: 1px solid #000000;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px; /* Spacious gaps on screen view */
+    background-color: #ffffff;
+  }
+
+  .report-screen-card .section-title {
+    font-size: 12pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 4px;
+    margin-top: 2mm;
+    margin-bottom: 4mm;
+  }
+
+  .report-screen-card table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+  }
+
+  .report-screen-card th, .report-screen-card td {
+    padding: 10px 12px; /* Generous padding on screen */
+    font-size: 11pt;
+    border: 1px solid #000000;
+    color: #000000;
+  }
+
+  .report-screen-card th {
+    background-color: #f3f4f6;
+  }
+
+  .report-screen-card table th:nth-child(1), .report-screen-card table td:nth-child(1) {
+    width: 45%;
+    white-space: normal !important; /* Allow multi-line test names */
+  }
+
+  .report-screen-card table th:nth-child(2), .report-screen-card table td:nth-child(2) {
+    width: 20%;
+  }
+
+  .report-screen-card table th:nth-child(3), .report-screen-card table td:nth-child(3) {
+    width: 20%;
+  }
+
+  .report-screen-card table th:nth-child(4), .report-screen-card table td:nth-child(4) {
+    width: 15%;
+  }
+
+  .report-screen-card .material-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .report-screen-card .footer-signatures {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  .report-screen-card .footer-signatures > div {
+    width: 40%;
+  }
+
+  .footer-right-stack {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 2px !important;
+  }
+
+  .document-footer-meta {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important; /* Pushes left to left, right to right */
+    align-items: center !important;
+    font-size: 9pt !important;
+    font-family: 'Cambria', serif !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    border-top: 1px solid #000000 !important;
+    padding-top: 2mm !important;
+    margin-top: 3mm !important;
+  }
+
+  /* To make absolutely sure PAGE 1 / 1 is dead-center regardless of text lengths */
+  .document-footer-meta > div:nth-child(1) { flex: 1; text-align: left; }
+  .document-footer-meta > div:nth-child(2) { flex: 1; text-align: center; }
+  .document-footer-meta > div:nth-child(3) { flex: 1; text-align: right; }
+
+  .report-screen-card .printed-header-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 0;
+    margin-bottom: 5mm; /* Enhanced header margin */
+  }
+
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm 15mm 12mm 15mm !important; /* Symmetrical margins for A4 printing */
+    }
+
+    html, body {
+      height: 100% !important;
+      max-height: 100% !important;
+      overflow: hidden !important; /* Prevents any blank 2nd page */
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      font-family: 'Cambria', serif !important;
+    }
+
+    .print-preview-wrapper {
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: block !important;
+      width: 100% !important;
+    }
+
+    /* Strict A4 box — let @page margins act as the outer frame */
+    .report-screen-card {
+      width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
+      box-sizing: border-box !important;
+      padding: 0 !important; /* Reset padding to 0, since @page margins handle it */
+      margin: 0 !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important; /* This pushes Area 3 & signatures to the bottom and expands gaps between Area 1 and 2! */
+      background: #ffffff !important;
+      overflow: hidden !important;
+    }
+
+    .report-content-wrapper {
+      display: flex !important;
+      flex-direction: column !important;
+      flex: 1 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .report-content-wrapper::before,
+    .report-content-wrapper::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    .printed-header-img {
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      margin-top: 0 !important;
+      margin-bottom: 3mm !important;
+    }
+
+    /* Full-Width Expansion — scoped to reports only, NOT labels */
+    .report-screen-card table,
+    .report-screen-card .material-info-grid,
+    .report-screen-card div {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .grid > div, .material-info-grid > div {
+      width: auto !important;
+    }
+
+    .footer-signatures > div {
+      width: 40% !important;
+    }
+
+    /* Section cards — compressed for vertical safety */
+    .section-card {
+      border: 1px solid #000000 !important;
+      border-radius: 8px !important;
+      padding: 10px 14px !important;
+      margin-bottom: 7mm !important; /* Elegant double-spaced gap between Area 1, Area 2, and Area 3 */
+      background-color: #ffffff !important;
+      page-break-inside: avoid !important;
+    }
+
+    /* Results table top margin */
+    .report-table {
+      margin-top: 4px !important;
+    }
+
+    .report-title {
+      margin-top: 0 !important;
+      margin-bottom: 4mm !important; /* Minimal spacing so it is pulled up right at the beginning */
+    }
+
+    .section-title {
+      font-size: 11pt !important;
+      font-weight: bold !important;
+      text-transform: uppercase !important;
+      border-bottom: 1px solid #e5e7eb !important;
+      padding-bottom: 2px !important;
+      margin-top: 1mm !important;
+      margin-bottom: 1mm !important;
+    }
+
+    /* Table rows — tightest padding to avoid vertical overflow */
+    .report-table th, .report-table td {
+      padding: 6px 10px !important; /* Perfectly readable row height */
+      font-size: 10pt !important;
+      border: 1px solid #000000 !important;
+      color: #000000 !important;
+    }
+    th, td {
+      padding: 3px 8px !important;
+      font-size: 10pt !important;
+      border: 1px solid #000000 !important;
+      color: #000000 !important;
+    }
+
+    th {
+      background-color: #f3f4f6 !important;
+    }
+
+    table th:nth-child(1), table td:nth-child(1) {
+      width: 45% !important;
+      white-space: normal !important; /* Allow multi-line test names */
+    }
+
+    table th:nth-child(2), table td:nth-child(2) {
+      width: 20% !important;
+    }
+
+    table th:nth-child(3), table td:nth-child(3) {
+      width: 20% !important;
+    }
+
+    table th:nth-child(4), table td:nth-child(4) {
+      width: 15% !important;
+    }
+
+    .grid, .material-info-grid {
+      display: grid !important;
+    }
+
+    /* Signatures — fluid, not absolute */
+    .footer-signatures {
+      display: flex !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      margin-top: 3mm !important;
+      margin-bottom: 1mm !important;
+      page-break-inside: avoid !important;
+    }
+
+    /* Footer meta — flows naturally below signatures, NO position: absolute */
+    .document-footer-meta {
+      width: 100% !important;
+      display: flex !important;
+      justify-content: space-between !important; /* Pushes left to left, right to right */
+      align-items: center !important;
+      font-size: 9pt !important;
+      font-family: 'Cambria', serif !important;
+      font-weight: bold !important;
+      text-transform: uppercase !important;
+      border-top: 1px solid #000000 !important;
+      padding-top: 2mm !important;
+      margin-top: 3mm !important;
+    }
+
+    .no-print, button, nav, sidebar, .pdf-btn {
+      display: none !important;
+    }
+  }
+
+  /* Screen Styles for Print Preview Page wrapper */
+  @media screen {
+    .print-preview-wrapper {
+      background-color: #0f172a !important; /* Nice dark background matching dashboard */
+      min-height: 100vh;
+      width: 100%;
+      padding: 40px 20px;
+      display: block;
+      box-sizing: border-box;
+    }
+  }
+}
+
+/* Material Labels print layout styling */
+.material-label-card {
+  width: 120mm !important;   /* Strict 12 cm */
+  height: 60mm !important;   /* Strict 6 cm */
+  border: 2px solid #000000 !important;
+  position: relative !important; /* Crucial container anchor */
+  box-sizing: border-box !important;
+  background: #ffffff !important;
+}
+
+.compact-hazard-box {
+  position: absolute !important;
+  top: 4mm !important;
+  right: 4mm !important;
+  width: 32mm !important;    /* Very tight, small horizontal width */
+  height: 24mm !important;   /* Compact vertical height */
+  border: 1px solid #000000 !important;
+  border-radius: 4px !important;
+  padding: 3px !important;
+  background: #ffffff !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  z-index: 20 !important;
+}
+
+.compact-hazard-box div {
+  font-size: 7.5pt !important;
+  font-weight: bold !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+.label-internal-footer {
+  position: absolute !important;
+  bottom: 2.5mm !important;
+  left: 4mm !important;
+  right: 4mm !important;
+  text-align: center !important;
+  font-size: 8.5pt !important;
+  font-weight: bold !important;
+  border-top: 1px dotted #000000 !important;
+  padding-top: 1mm !important;
+  text-transform: uppercase !important;
+}
+
+.label-meta-list {
+  position: absolute !important;
+  top: 4mm !important;
+  left: 4mm !important;
+  max-width: 70mm !important; /* Strictly bounded away from the hazard ratings box */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.8mm !important; /* Elegantly expanded vertical distribution */
+  text-align: left !important;
+}
+
+.label-meta-list span {
+  font-size: 9pt !important;
+  line-height: 1.3 !important;
+  display: block !important;
+  white-space: nowrap !important;
+}
+
+/* Style for the first row (Material Name) to make it prominent */
+.label-meta-list .material-title-row {
+  font-size: 13pt !important;
+  font-weight: bold !important;
+  margin-bottom: 1mm !important;
+}
+
+.labels-print-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, 120mm) !important;
+  gap: 6mm !important; /* Clean layout gap between labels */
+  justify-content: start !important;
+}
+
+/* Company logo inside each label card */
+.label-company-logo {
+  height: 6mm !important;
+  width: auto !important;
+  max-width: 30mm !important;
+  margin-bottom: 2mm !important;
+  display: block !important;
+}
+
+/* Material Report Layout Styling */
+.report-sections-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4mm !important; /* Tight, professional gap instead of huge empty spaces */
+}
+
+/* Override margin-bottom on section-card when inside the sections container to respect the 4mm gap */
+.report-sections-container .section-card {
+  margin-bottom: 0 !important;
+}
+
+.report-data-table {
+  width: 100% !important; /* Forces tables to take full container width */
+  max-width: 100% !important;
+  border-collapse: collapse !important;
+  margin-top: 2mm !important;
+}
+
+.report-data-table th, 
+.report-data-table td {
+  padding: 6px 10px !important; /* Tight, professional padding */
+  font-size: 10pt !important;
+}
+

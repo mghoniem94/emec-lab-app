@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model MaterialLog {
+  id                 Int       @id @default(autoincrement())
+  
+  // Format: YYYY-XXXX (e.g., 2026-0001). Generated dynamically on creation.
+  reportNo           String    @unique 
+  
+  type               String    // 'STR' or 'MTR'
+  supplier           String
+  batchNoRef         String
+  materialName       String
+  equiEmecProduct    String
+  
+  receivedDate       DateTime
+  withdrawalDate     DateTime? // Optional, in case it hasn't been withdrawn yet
+  reportDate         DateTime
+  
+  testBy             String
+  mtrStrNo           String
+  testResult         String    // 'Pass', 'Fail', 'Under Testing'
+  
+  // NFPA 704 Hazard Ratings (0 - 4)
+  hazardHealth       Int
+  hazardFlammability Int
+  hazardInstability  Int
+  
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  
+  report             MaterialReport?
+}
+
+model MaterialReport {
+  id             Int          @id @default(autoincrement())
+  materialLogId  Int          @unique
+  materialLog    MaterialLog  @relation(fields: [materialLogId], references: [id], onDelete: Cascade)
+  
+  finalStatus    String       // 'Pass' | 'Fail' | 'Pending'
+  comment        String
+  
+  testResults    TestResult[]
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model TestResult {
+  id             Int            @id @default(autoincrement())
+  reportId       Int
+  report         MaterialReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  
+  testName       String
+  requirement    String?
+  testMethod     String?
+  result         String
+}
+
+model ProductSpecification {
+  id                 Int      @id @default(autoincrement())
+  materialName       String   @unique
+  parameters         SpecificationParameter[]
+  
+  masterSopPath      String?  // NEW: Single PDF for the whole product
+  
+  hazardHealth       Int      @default(0)
+  hazardFlammability Int      @default(0)
+  hazardInstability  Int      @default(0)
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model SpecificationParameter {
+  id                Int      @id @default(autoincrement())
+  specificationId   Int
+  specification     ProductSpecification @relation(fields: [specificationId], references: [id], onDelete: Cascade)
+  parameterName     String
+  requirement       String
+  testMethod        String
+  order             Int      @default(0)
+}
+
+model TestMethodSop {
+  id          Int      @id @default(autoincrement())
+  methodName  String   @unique
+  description String
+  documentUrl String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// --- NextAuth Models ---
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
