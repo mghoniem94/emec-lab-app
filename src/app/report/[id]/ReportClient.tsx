@@ -212,7 +212,12 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
               <div className="border border-black rounded-lg p-3 bg-white section-card area-card-container">
                 <h3 className="text-[11pt] font-bold mb-2 uppercase border-b border-gray-200 pb-0.5 section-title">2. Laboratory Test Results</h3>
                 <table className="report-data-table" style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
-                  <colgroup><col style={{ width: '80mm' }} /><col style={{ width: '25mm' }} /><col style={{ width: '40mm' }} /><col style={{ width: '25mm' }} /></colgroup>
+                  <colgroup>
+                    <col style={{ width: '45%' }} />
+                    <col style={{ width: '25%' }} />
+                    <col style={{ width: '15%' }} />
+                    <col style={{ width: '15%' }} />
+                  </colgroup>
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="border border-black py-1 px-2 font-bold uppercase">Parameter</th>

@@ -36,8 +36,12 @@ export default async function ReportPage({ params }: { params: { id: string } })
         }
         @media print, screen {
           /* Force multi-line text wrapping and block cross-column drifting */
-          table th, 
-          table td {
+          .report-data-table {
+            table-layout: fixed !important;
+            width: 100% !important;
+          }
+          .report-data-table th, 
+          .report-data-table td {
             font-size: 9.5pt !important;
             padding: 5px 8px !important;
             white-space: normal !important;       /* Forces long text to drop to the next line naturally */
@@ -45,6 +49,30 @@ export default async function ReportPage({ params }: { params: { id: string } })
             overflow: hidden !important;          /* Keeps content entirely within cell limits */
             box-sizing: border-box !important;    /* Prevents horizontal padding expansion */
             vertical-align: middle !important;
+          }
+          .report-data-table col:nth-child(1),
+          .report-data-table th:nth-child(1),
+          .report-data-table td:nth-child(1) {
+            width: 45% !important;
+            max-width: 45% !important;
+          }
+          .report-data-table col:nth-child(2),
+          .report-data-table th:nth-child(2),
+          .report-data-table td:nth-child(2) {
+            width: 25% !important;
+            max-width: 25% !important;
+          }
+          .report-data-table col:nth-child(3),
+          .report-data-table th:nth-child(3),
+          .report-data-table td:nth-child(3) {
+            width: 15% !important;
+            max-width: 15% !important;
+          }
+          .report-data-table col:nth-child(4),
+          .report-data-table th:nth-child(4),
+          .report-data-table td:nth-child(4) {
+            width: 15% !important;
+            max-width: 15% !important;
           }
         }
         @media screen {
