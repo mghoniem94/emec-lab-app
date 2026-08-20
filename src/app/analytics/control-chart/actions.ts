@@ -12,6 +12,20 @@ export async function getMaterialsForChart() {
   return materials.map(m => m.equiEmecProduct);
 }
 
+export async function getCompaniesForMaterial(materialName: string) {
+  if (!materialName) return [];
+  const logs = await prisma.materialLog.findMany({
+    where: {
+      equiEmecProduct: materialName,
+      supplier: { not: "" }
+    },
+    select: { supplier: true },
+    distinct: ['supplier'],
+    orderBy: { supplier: 'asc' }
+  });
+  return logs.map(l => l.supplier).filter((s): s is string => Boolean(s));
+}
+
 export async function getParametersForMaterial(materialName: string) {
   // Let's get them from ProductSpecification
   const spec = await prisma.productSpecification.findUnique({
