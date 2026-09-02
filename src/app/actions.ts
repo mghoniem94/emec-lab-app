@@ -196,7 +196,8 @@ export async function saveMaterialReport(
   finalStatus: string, 
   comment: string, 
   testResults: { testName: string, requirement: string, testMethod: string, result: string }[],
-  hazards?: { hazardHealth: number, hazardFlammability: number, hazardInstability: number }
+  hazards?: { hazardHealth: number, hazardFlammability: number, hazardInstability: number },
+  draftUrls?: string[]
 ) {
   // Use a transaction to recreate the report to easily sync test results
   const report = await prisma.$transaction(async (tx) => {
@@ -231,6 +232,7 @@ export async function saveMaterialReport(
         materialLogId,
         finalStatus,
         comment,
+        draftUrls: draftUrls || [],
         testResults: {
           create: testResults.map((test) => ({
             testName: test.testName,

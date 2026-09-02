@@ -6,6 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const requestedBucket = (formData.get("bucket") as string) || "sops";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -15,32 +16,39 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
 
     // مفاتيح الاتصال بـ Supabase
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const rawSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseUrl = rawSupabaseUrl.startsWith("http") ? rawSupabaseUrl : `https://${rawSupabaseUrl}`;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // عمل اسم فريد للملف
     const uniqueName = `${uuidv4()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '')}`;
 
-    // الرفع لمخزن sops
+    // الرفع للمخزن المحدد (مثل result-drafts أو sops)
     const { error } = await supabase.storage
-      .from("sops")
+      .from(requestedBucket)
       .upload(uniqueName, buffer, {
-        contentType: file.type,
+        contentType: file.type || "image/jpeg",
+        upsert: true,
       });
 
     if (error) {
+      console.error(`Supabase storage upload error (bucket: ${requestedBucket}):`, error);
       throw error;
     }
 
     // استخراج الرابط المباشر للملف
     const { data: publicUrlData } = supabase.storage
-      .from("sops")
+      .from(requestedBucket)
       .getPublicUrl(uniqueName);
 
-    return NextResponse.json({ path: publicUrlData.publicUrl });
-  } catch (error) {
+    return NextResponse.json({ 
+      path: publicUrlData.publicUrl,
+      url: publicUrlData.publicUrl,
+      fileName: uniqueName
+    });
+  } catch (error: any) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Failed to upload file" }, { status: 500 });
   }
 }

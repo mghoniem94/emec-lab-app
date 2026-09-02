@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { format } from "date-fns"
-import { ArrowLeft, Save, Printer, Plus, Trash2, ShieldCheck, AlertTriangle, FileText, BookOpen, ExternalLink, Shield } from "lucide-react"
+import { ArrowLeft, Save, Printer, Plus, Trash2, ShieldCheck, AlertTriangle, FileText, BookOpen, ExternalLink, Shield, Camera, Image as ImageIcon, X, Eye, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { saveMaterialReport } from "@/app/actions"
@@ -28,6 +28,13 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
   const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null)
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false)
 
+  // Draft Photos state
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [draftUrls, setDraftUrls] = useState<string[]>(initialData.report?.draftUrls || [])
+  const [isUploadingDraft, setIsUploadingDraft] = useState(false)
+  const [previewDraftUrl, setPreviewDraftUrl] = useState<string | null>(null)
+  const [isDraftModalOpen, setIsDraftModalOpen] = useState(false)
+
   const handleOpenSop = (methodName: string) => {
     const sop = sops.find(s => s.methodName.toLowerCase() === methodName.toLowerCase().trim())
     if (sop) {
@@ -39,6 +46,58 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
   const handlePdfPreview = (url: string) => {
     setPreviewPdfUrl(url)
     setIsPdfModalOpen(true)
+  }
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    if (draftUrls.length + files.length > 3) {
+      alert(`Maximum 3 draft photos allowed per report. Currently attached: ${draftUrls.length}.`)
+      if (fileInputRef.current) fileInputRef.current.value = ""
+      return
+    }
+
+    setIsUploadingDraft(true)
+    const newUrls: string[] = []
+
+    try {
+      for (const file of files) {
+        const formData = new FormData()
+        formData.append("file", file)
+        formData.append("bucket", "result-drafts")
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        })
+
+        const data = await res.json()
+        if (!res.ok || data.error) {
+          throw new Error(data.error || "Failed to upload image")
+        }
+        if (data.url || data.path) {
+          newUrls.push(data.url || data.path)
+        }
+      }
+
+      setDraftUrls((prev) => [...prev, ...newUrls].slice(0, 3))
+    } catch (err: any) {
+      console.error("Draft upload error:", err)
+      alert(`Failed to upload photo: ${err.message || "Unknown error"}`)
+    } finally {
+      setIsUploadingDraft(false)
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+  }
+
+  const handleRemoveDraft = (index: number) => {
+    setDraftUrls((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleOpenDraftPreview = (url: string) => {
+    setPreviewDraftUrl(url)
+    setIsDraftModalOpen(true)
   }
 
   // Initialize tests
@@ -151,7 +210,8 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
           hazardHealth: reportHazards.health,
           hazardFlammability: reportHazards.flammability,
           hazardInstability: reportHazards.instability,
-        }
+        },
+        draftUrls
       )
       alert("Report saved successfully!")
       router.refresh()
@@ -258,6 +318,21 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
                   </p>
                 </div>
               </div>
+
+              {/* Attached Results Drafts in Print View */}
+              {draftUrls.length > 0 && (
+                <div className="border border-black rounded-lg p-3 bg-white break-inside-avoid section-card area-card-container">
+                  <h3 className="text-[11pt] font-bold mb-2 uppercase border-b border-gray-200 pb-0.5 section-title">Attached Results Drafts</h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    {draftUrls.map((url, idx) => (
+                      <div key={idx} className="border border-gray-300 rounded p-1 text-center bg-gray-50">
+                        <img src={url} alt={`Draft ${idx + 1}`} className="max-h-36 w-full object-contain mx-auto rounded" />
+                        <span className="text-[8pt] font-semibold text-gray-700 block mt-1">Results Draft #{idx + 1}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -330,32 +405,32 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
 
   // --- STANDARD UI VIEW ---
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 w-full px-6 pb-24 relative">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 w-full px-2 sm:px-6 pb-24 relative">
       
       {/* Header Actions & Compact Info */}
-      <div className="flex items-center justify-between bg-slate-800/20 backdrop-blur-md p-4 rounded-2xl border border-white/5 sticky top-0 z-30">
-        <div className="flex items-center gap-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-800/30 backdrop-blur-md p-4 rounded-2xl border border-white/5 sticky top-0 z-30 shadow-lg">
+        <div className="flex items-center gap-3 sm:gap-6">
           <Link href="/log" className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-black text-white uppercase tracking-tight leading-none mb-1">{initialData.materialName}</h1>
-            <div className="flex items-center gap-3 text-[10px] font-bold text-slate-500">
+            <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight leading-none mb-1">{initialData.materialName}</h1>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] font-bold text-slate-500">
               <span className="text-blue-400">REPORT NO: {initialData.reportNo}</span>
-              <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
+              <span className="w-1 h-1 bg-slate-700 rounded-full hidden sm:inline-block"></span>
               <span>{format(new Date(initialData.receivedDate), "dd MMM yyyy")}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Tucked NFPA Diamond */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 rounded-xl border border-white/5 shadow-inner mr-4 group hover:bg-slate-900 transition-all cursor-default">
+          <div className="flex items-center gap-2 px-2.5 py-1.5 bg-slate-900/50 rounded-xl border border-white/5 shadow-inner sm:mr-2 group hover:bg-slate-900 transition-all cursor-default">
             <NFPA704Diamond 
               health={reportHazards.health} 
               flammability={reportHazards.flammability} 
               instability={reportHazards.instability} 
-              className="w-10 h-10"
+              className="w-8 h-8 sm:w-10 sm:h-10"
             />
             <div className="hidden group-hover:flex items-center gap-2 animate-in fade-in slide-in-from-right-2">
               <div className="flex flex-col">
@@ -366,23 +441,25 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
             </div>
           </div>
 
-          <button 
-            onClick={() => setIsPrintMode(true)}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-medium transition-colors border border-slate-700 flex items-center gap-2 text-sm"
-          >
-            <Printer className="w-4 h-4" /> Print
-          </button>
-          <button 
-            onClick={handleSave}
-            disabled={isSubmitting}
-            className="px-5 py-2 bg-primary hover:bg-blue-600 text-primary-foreground rounded-xl font-medium shadow-lg shadow-primary/20 transition-colors flex items-center gap-2 disabled:opacity-50 text-sm"
-          >
-            <Save className="w-4 h-4" /> {isSubmitting ? "Saving..." : "Save"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setIsPrintMode(true)}
+              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-medium transition-colors border border-slate-700 flex items-center gap-1.5 text-xs sm:text-sm"
+            >
+              <Printer className="w-4 h-4" /> Print
+            </button>
+            <button 
+              onClick={handleSave}
+              disabled={isSubmitting}
+              className="px-4 sm:px-5 py-2 bg-primary hover:bg-blue-600 text-primary-foreground rounded-xl font-medium shadow-lg shadow-primary/20 transition-colors flex items-center gap-1.5 disabled:opacity-50 text-xs sm:text-sm"
+            >
+              <Save className="w-4 h-4" /> {isSubmitting ? "Saving..." : "Save"}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 sm:gap-6">
         
         {/* Left Column: Material Info & Status & Hazard Edit */}
         <div className="xl:col-span-1 space-y-6">
@@ -476,18 +553,99 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
           <div className="glass-card rounded-2xl p-6 border border-slate-700/50 relative overflow-hidden min-h-full">
             <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
             
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <h2 className="text-xl font-semibold text-white">Area 2: Test Results</h2>
-              <button 
-                onClick={handleAddTest}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-colors border border-slate-700"
-              >
-                <Plus className="w-4 h-4" /> Add Custom Test
-              </button>
+              <div className="flex items-center gap-3">
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  accept="image/*" 
+                  capture="environment" 
+                  multiple 
+                  className="hidden"
+                />
+                <button 
+                  type="button"
+                  onClick={() => {
+                    if (draftUrls.length >= 3) {
+                      alert("Maximum 3 draft photos allowed per report.")
+                      return
+                    }
+                    fileInputRef.current?.click()
+                  }}
+                  disabled={isUploadingDraft || draftUrls.length >= 3}
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-blue-300 rounded-xl text-sm font-semibold transition-all border border-blue-500/30 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm cursor-pointer"
+                  title="Attach 1-3 handwritten test result draft photos"
+                >
+                  {isUploadingDraft ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                  ) : (
+                    <Camera className="w-4 h-4 text-blue-400" />
+                  )}
+                  <span>📷 Add Results Draft</span>
+                  {draftUrls.length > 0 && (
+                    <span className="ml-1 px-1.5 py-0.5 text-[10px] font-extrabold bg-blue-500/20 text-blue-300 rounded-full border border-blue-500/30">
+                      {draftUrls.length}/3
+                    </span>
+                  )}
+                </button>
+
+                <button 
+                  onClick={handleAddTest}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium transition-colors border border-slate-700"
+                >
+                  <Plus className="w-4 h-4" /> Add Custom Test
+                </button>
+              </div>
             </div>
             
-            <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 overflow-hidden">
-              <table className="w-full text-left text-sm">
+            {/* Display attached draft thumbnails */}
+            {draftUrls.length > 0 && (
+              <div className="mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700/60 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <ImageIcon className="w-4 h-4 text-blue-400" /> Attached Results Drafts ({draftUrls.length}/3)
+                  </span>
+                  <span className="text-[11px] text-slate-500">Click thumbnail to view full image</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  {draftUrls.map((url, idx) => (
+                    <div 
+                      key={idx} 
+                      className="relative group w-24 h-24 rounded-xl overflow-hidden border border-slate-700 bg-slate-950 shadow-lg transition-all hover:border-blue-500/60"
+                    >
+                      <img 
+                        src={url} 
+                        alt={`Results Draft ${idx + 1}`} 
+                        onClick={() => handleOpenDraftPreview(url)}
+                        className="w-full h-full object-cover cursor-pointer transition-transform group-hover:scale-105" 
+                      />
+                      <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                        <Eye className="w-5 h-5 text-white drop-shadow-md" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleRemoveDraft(idx)
+                        }}
+                        className="absolute top-1 right-1 p-1 bg-red-600/90 hover:bg-red-600 text-white rounded-full transition-all shadow-md hover:scale-110"
+                        title="Delete photo"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                      <div className="absolute bottom-0 inset-x-0 bg-slate-950/80 text-[10px] text-center py-0.5 text-slate-300 font-bold tracking-tight">
+                        Draft #{idx + 1}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 overflow-x-auto w-full">
+              <table className="w-full text-left text-sm min-w-[600px]">
                 <thead className="bg-slate-800/80 border-b border-slate-700">
                   <tr>
                     <th className="px-4 py-3 font-semibold text-slate-300 w-[30%]">Parameter</th>
@@ -626,6 +784,44 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
 
             <div className="flex justify-end pt-2">
               <button onClick={() => setIsSopModalOpen(false)} className="px-5 py-2 bg-slate-700 text-white rounded-xl font-medium hover:bg-slate-600 transition-colors">
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Draft Image Lightbox Modal */}
+      <Modal isOpen={isDraftModalOpen} onClose={() => setIsDraftModalOpen(false)} title="Results Draft Photo">
+        {previewDraftUrl && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-blue-400" /> Handwritten Results Draft
+              </h3>
+              <a 
+                href={previewDraftUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-xs text-blue-400 hover:text-blue-300 underline flex items-center gap-1"
+              >
+                Open original <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+            
+            <div className="max-h-[70vh] overflow-auto rounded-xl border border-slate-700 bg-slate-950 flex items-center justify-center p-2">
+              <img 
+                src={previewDraftUrl} 
+                alt="Results Draft Full Preview" 
+                className="max-w-full h-auto rounded-lg object-contain"
+              />
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button 
+                onClick={() => setIsDraftModalOpen(false)} 
+                className="px-5 py-2 bg-slate-700 text-white rounded-xl font-medium hover:bg-slate-600 transition-colors text-sm"
+              >
                 Close
               </button>
             </div>

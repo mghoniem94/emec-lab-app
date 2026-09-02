@@ -50,7 +50,7 @@ export function SearchableSelect({
       <input type="hidden" id={id} name={name} value={value} required={required} />
       
       <div 
-        className="w-full bg-slate-800/50 border border-slate-700 rounded-lg py-2 px-3 text-white focus-within:border-primary flex items-center cursor-pointer transition-colors"
+        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 px-3 text-sm text-white focus-within:border-primary flex items-center cursor-pointer transition-colors"
         onClick={() => {
           setIsOpen(!isOpen)
           if (!isOpen) setSearchTerm("") // Reset search on open to show all options
@@ -64,12 +64,12 @@ export function SearchableSelect({
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute z-50 w-full mt-1 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           <div className="p-2 border-b border-slate-700 flex items-center gap-2">
-            <Search className="w-4 h-4 text-slate-400" />
+            <Search className="w-4 h-4 text-slate-400 shrink-0" />
             <input 
               type="text" 
-              className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none"
+              className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none py-1"
               placeholder="Search or type custom..."
               value={searchTerm}
               onChange={e => {
@@ -79,16 +79,16 @@ export function SearchableSelect({
               autoFocus
             />
           </div>
-          <ul className="max-h-60 overflow-y-auto py-1">
+          <ul className="max-h-56 overflow-y-auto py-1">
             {filteredOptions.length === 0 ? (
-              <li className="px-3 py-2 text-sm text-slate-500 text-center italic">
+              <li className="px-3.5 py-2.5 text-sm text-slate-500 text-center italic">
                 {searchTerm ? "Custom value active" : "No options found"}
               </li>
             ) : (
               filteredOptions.map((option, i) => (
                 <li 
                   key={i}
-                  className="px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 cursor-pointer"
+                  className="px-3.5 py-2.5 text-sm text-slate-200 hover:bg-slate-700/80 active:bg-blue-600/20 cursor-pointer transition-colors"
                   onClick={() => {
                     onChange(option)
                     setIsOpen(false)

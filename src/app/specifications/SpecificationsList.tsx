@@ -36,26 +36,26 @@ export function SpecificationsList({ initialSpecs }: SpecificationsListProps) {
   )
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2 flex items-center gap-3">
-            <Settings2 className="w-8 h-8 text-blue-500" />
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-1.5 flex items-center gap-3">
+            <Settings2 className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500 shrink-0" />
             Product Specifications
           </h1>
-          <p className="text-slate-400">Master data for chemical testing parameters and requirements.</p>
+          <p className="text-sm text-slate-400">Master data for chemical testing parameters and requirements.</p>
         </div>
         
         {/* Search & Actions */}
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative w-full max-w-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+          <div className="relative w-full sm:max-w-xs">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
               <Search size={16} />
             </span>
             <input
               type="text"
-              placeholder="Search chemical specifications..."
-              className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500/50 transition"
+              placeholder="Search chemical specs..."
+              className="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500/50 transition-all"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -64,7 +64,7 @@ export function SpecificationsList({ initialSpecs }: SpecificationsListProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {filteredSpecs.map(spec => (
           <Link 
             key={spec.id} 

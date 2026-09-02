@@ -15,15 +15,15 @@ export function Modal({ isOpen, onClose, title, children }: { isOpen: boolean, o
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity no-print">
-      <div className="glass-card w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-        <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-white/10 bg-[#1e293b]/90 backdrop-blur-md">
-          <h2 className="text-xl font-semibold tracking-tight text-white">{title}</h2>
-          <button title="Close modal" aria-label="Close modal" onClick={onClose} className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm transition-opacity no-print">
+      <div className="glass-card w-full max-w-2xl max-h-[92vh] rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 border border-slate-700/80 overflow-hidden flex flex-col">
+        <div className="sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 border-b border-white/10 bg-[#1e293b]/95 backdrop-blur-md">
+          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white truncate pr-2">{title}</h2>
+          <button title="Close modal" aria-label="Close modal" onClick={onClose} className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white shrink-0">
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-6">
+        <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(92vh-70px)]">
           {children}
         </div>
       </div>

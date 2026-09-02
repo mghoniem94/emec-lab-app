@@ -190,23 +190,23 @@ export default function ControlChartPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
         <div>
-          <h1 className="text-3xl font-bold text-slate-100 tracking-tight flex items-center gap-3">
-            <Activity className="w-8 h-8 text-blue-500" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight flex items-center gap-3">
+            <Activity className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500 shrink-0" />
             SPC Control Chart
           </h1>
-          <p className="text-slate-400 mt-2">
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Track material test result trends, apply multi-criteria filters, and export analysis data.
           </p>
         </div>
 
         {/* Excel Export Button */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
             onClick={handleExportExcel}
             disabled={isExportDisabled}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-emerald-600 border border-emerald-500/30 shadow-lg shadow-emerald-950/30 transition-all cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed border border-emerald-500/30 shadow-lg transition-all cursor-pointer"
             title={isExportDisabled ? "No data available to export" : "Export filtered dataset to Excel"}
           >
             <FileSpreadsheet className="w-4 h-4" />
@@ -216,9 +216,9 @@ export default function ControlChartPage() {
       </div>
       
       {/* Filters Panel */}
-      <div className="bg-[#0f172a] glass-card rounded-2xl p-6 border border-slate-800 space-y-5">
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-          <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+      <div className="bg-[#0f172a] glass-card rounded-2xl p-4 sm:p-6 border border-slate-800 space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+          <h3 className="text-xs sm:text-sm font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
             <Filter className="w-4 h-4 text-blue-400" />
             Filter Controls
           </h3>
@@ -228,12 +228,12 @@ export default function ControlChartPage() {
               className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 transition-colors"
             >
               <RotateCcw className="w-3 h-3" />
-              Reset Company & Date Filters
+              Reset Filters
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5 sm:gap-4">
           {/* 1. Material Dropdown */}
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-slate-300">Material</label>
@@ -295,7 +295,7 @@ export default function ControlChartPage() {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               disabled={!selectedMaterial}
-              className="w-full bg-[#1e293b] border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#1e293b] border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed [color-scheme:dark]"
             />
           </div>
 
@@ -310,19 +310,19 @@ export default function ControlChartPage() {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               disabled={!selectedMaterial}
-              className="w-full bg-[#1e293b] border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#1e293b] border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed [color-scheme:dark]"
             />
           </div>
         </div>
       </div>
       
       {/* Chart Area */}
-      <div className="bg-[#0f172a] glass-card rounded-2xl p-6 border border-slate-800 min-h-[480px] flex flex-col">
+      <div className="bg-[#0f172a] glass-card rounded-2xl p-4 sm:p-6 border border-slate-800 min-h-[360px] sm:min-h-[480px] flex flex-col">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
               Trend Analysis
-              {loading && <span className="text-sm text-blue-400 font-normal animate-pulse">Loading data...</span>}
+              {loading && <span className="text-xs text-blue-400 font-normal animate-pulse">Loading data...</span>}
             </h2>
             {selectedMaterial && selectedParameter && (
               <p className="text-xs text-slate-400 mt-1">
@@ -332,22 +332,22 @@ export default function ControlChartPage() {
           </div>
           
           {limits.originalText && (
-            <div className="flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 self-start sm:self-auto">
-              <Info className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 self-start sm:self-auto">
+              <Info className="w-4 h-4 shrink-0" />
               Spec Limit: {limits.originalText}
             </div>
           )}
         </div>
         
         {!selectedMaterial || !selectedParameter ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-4 py-16">
-            <Activity className="w-16 h-16 opacity-20" />
-            <p className="text-slate-400">Select a material and test parameter to view the control chart</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-4 py-12 sm:py-16">
+            <Activity className="w-12 h-12 sm:w-16 sm:h-16 opacity-20" />
+            <p className="text-xs sm:text-sm text-slate-400 text-center">Select a material and test parameter to view the control chart</p>
           </div>
         ) : filteredChartData.length === 0 && !loading ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-4 py-16">
-            <AlertCircle className="w-16 h-16 opacity-20 text-amber-500" />
-            <p className="text-slate-400">No test results match the current filter criteria</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-4 py-12 sm:py-16">
+            <AlertCircle className="w-12 h-12 sm:w-16 sm:h-16 opacity-20 text-amber-500" />
+            <p className="text-xs sm:text-sm text-slate-400 text-center">No test results match the current filter criteria</p>
             {hasActiveSecondaryFilters && (
               <button
                 onClick={handleResetSecondaryFilters}
@@ -358,29 +358,29 @@ export default function ControlChartPage() {
             )}
           </div>
         ) : (
-          <div style={{ width: '100%', height: '400px', minHeight: '400px', marginTop: '12px' }}>
+          <div className="w-full h-[300px] sm:h-[400px] min-h-[300px] mt-3">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={filteredChartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+              <LineChart data={filteredChartData} margin={{ top: 20, right: 15, left: -10, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
                 <XAxis 
                   dataKey="displayDate" 
                   stroke="#64748b" 
-                  tick={{ fill: '#94a3b8', fontSize: 12 }}
+                  tick={{ fill: '#94a3b8', fontSize: 11 }}
                   tickMargin={10}
                 />
                 <YAxis 
                   stroke="#64748b" 
-                  tick={{ fill: '#94a3b8', fontSize: 12 }}
+                  tick={{ fill: '#94a3b8', fontSize: 11 }}
                   tickMargin={10}
                   domain={['auto', 'auto']}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 
                 {limits.max !== null && (
-                  <ReferenceLine y={limits.max} stroke="#ef4444" strokeDasharray="5 5" label={{ position: 'top', value: `Max (${limits.max})`, fill: '#ef4444', fontSize: 12 }} />
+                  <ReferenceLine y={limits.max} stroke="#ef4444" strokeDasharray="5 5" label={{ position: 'top', value: `Max (${limits.max})`, fill: '#ef4444', fontSize: 11 }} />
                 )}
                 {limits.min !== null && (
-                  <ReferenceLine y={limits.min} stroke="#ef4444" strokeDasharray="5 5" label={{ position: 'bottom', value: `Min (${limits.min})`, fill: '#ef4444', fontSize: 12 }} />
+                  <ReferenceLine y={limits.min} stroke="#ef4444" strokeDasharray="5 5" label={{ position: 'bottom', value: `Min (${limits.min})`, fill: '#ef4444', fontSize: 11 }} />
                 )}
                 
                 <Line 
@@ -388,8 +388,8 @@ export default function ControlChartPage() {
                   dataKey="value" 
                   stroke="#3b82f6" 
                   strokeWidth={3}
-                  activeDot={{ r: 8, fill: "#3b82f6", stroke: "#0f172a", strokeWidth: 2 }}
-                  dot={{ r: 6, fill: "#3b82f6", stroke: "#1e293b", strokeWidth: 2 }}
+                  activeDot={{ r: 7, fill: "#3b82f6", stroke: "#0f172a", strokeWidth: 2 }}
+                  dot={{ r: 5, fill: "#3b82f6", stroke: "#1e293b", strokeWidth: 2 }}
                   name="Test Result"
                   animationDuration={500}
                   isAnimationActive={true}
@@ -402,30 +402,30 @@ export default function ControlChartPage() {
 
       {/* Filtered Data Preview Table */}
       {selectedMaterial && selectedParameter && filteredChartData.length > 0 && (
-        <div className="bg-[#0f172a] glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+        <div className="bg-[#0f172a] glass-card rounded-2xl p-4 sm:p-6 border border-slate-800 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h3 className="text-base sm:text-lg font-bold text-slate-100 flex items-center gap-2">
               Filtered Dataset ({filteredChartData.length})
             </h3>
             <button
               onClick={handleExportExcel}
-              className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 transition-colors"
+              className="self-start sm:self-auto text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               Download Excel
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-300">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left text-sm text-slate-300 min-w-[600px]">
               <thead className="text-xs uppercase bg-[#1e293b]/70 text-slate-400 border-b border-slate-800">
                 <tr>
-                  <th className="py-3 px-4">Test Date</th>
-                  <th className="py-3 px-4">Report No</th>
-                  <th className="py-3 px-4">Batch No</th>
-                  <th className="py-3 px-4">Supplier / Company</th>
-                  <th className="py-3 px-4 text-right">Value</th>
-                  <th className="py-3 px-4">Spec Requirement</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Test Date</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Report No</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Batch No</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Supplier / Company</th>
+                  <th className="py-3 px-4 text-right whitespace-nowrap">Value</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Spec Requirement</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60">
@@ -437,15 +437,15 @@ export default function ControlChartPage() {
                   return (
                     <tr key={`${row.id}-${row.reportNo}`} className="hover:bg-slate-800/40 transition-colors">
                       <td className="py-3 px-4 text-slate-200 font-medium whitespace-nowrap">{row.displayDate}</td>
-                      <td className="py-3 px-4 text-slate-300 font-mono text-xs">{row.reportNo}</td>
-                      <td className="py-3 px-4 text-slate-300">{row.batchNoRef || "-"}</td>
-                      <td className="py-3 px-4 text-slate-300">{row.supplier || "N/A"}</td>
+                      <td className="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">{row.reportNo}</td>
+                      <td className="py-3 px-4 text-slate-300 whitespace-nowrap">{row.batchNoRef || "-"}</td>
+                      <td className="py-3 px-4 text-slate-300 whitespace-nowrap">{row.supplier || "N/A"}</td>
                       <td className="py-3 px-4 text-right font-bold whitespace-nowrap">
                         <span className={isOutOfSpec ? "text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20" : "text-blue-400"}>
                           {row.rawValue}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-slate-400 text-xs">{row.requirement || "-"}</td>
+                      <td className="py-3 px-4 text-slate-400 text-xs whitespace-nowrap">{row.requirement || "-"}</td>
                     </tr>
                   )
                 })}

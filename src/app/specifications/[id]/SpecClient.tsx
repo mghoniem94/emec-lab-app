@@ -248,8 +248,8 @@ export default function SpecClient({ initialData, sops }: { initialData: SpecDat
         </div>
       </div>
 
-        <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 overflow-hidden">
-          <table className="w-full text-left text-sm">
+        <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 overflow-x-auto w-full">
+          <table className="w-full text-left text-sm min-w-[600px]">
             <thead className="bg-slate-800/80 border-b border-slate-700">
               <tr>
                 <th className="px-4 py-3 font-semibold text-slate-300 w-[30%]">Parameter</th>

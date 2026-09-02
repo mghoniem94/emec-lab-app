@@ -382,18 +382,18 @@ export default function DashboardClient({
       </div>
 
       <div className="glass-card rounded-2xl overflow-hidden border border-slate-700">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="text-xs text-slate-400 uppercase bg-slate-800/50 border-b border-slate-700">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left text-sm text-slate-300 min-w-[700px]">
+            <thead className="text-xs text-slate-400 uppercase bg-slate-800/60 border-b border-slate-700">
               <tr>
-                <th className="px-6 py-4">Select</th>
-                <th className="px-6 py-4">Type</th>
-                <th className="px-6 py-4">Material</th>
-                <th className="px-6 py-4">Supplier</th>
-                <th className="px-6 py-4">Batch No</th>
-                <th className="px-6 py-4">Result</th>
-                <th className="px-6 py-4">Received</th>
-                <th className="px-6 py-4 text-right w-32">Actions</th>
+                <th className="px-4 py-3.5 text-center w-12">Select</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Type</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Material</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Supplier</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Batch No</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Result</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Received</th>
+                <th className="px-4 py-3.5 text-right w-28 whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -406,8 +406,8 @@ export default function DashboardClient({
               ) : (
                 filteredData.map(item => (
                   <tr key={item.id} className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
+                    <td className="px-4 py-3.5 text-center">
+                      <div className="flex items-center justify-center">
                         <label htmlFor={`select-${item.id}`} className="sr-only">Select row</label>
                         <input 
                           id={`select-${item.id}`}
@@ -419,11 +419,11 @@ export default function DashboardClient({
                         />
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-400">{item.type}</td>
-                    <td className="px-6 py-4 font-medium text-white">{item.materialName}</td>
-                    <td className="px-6 py-4 text-slate-400">{item.supplier}</td>
-                    <td className="px-6 py-4 text-slate-400">{item.batchNoRef}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3.5 font-bold text-slate-400 whitespace-nowrap">{item.type}</td>
+                    <td className="px-4 py-3.5 font-medium text-white whitespace-nowrap">{item.materialName}</td>
+                    <td className="px-4 py-3.5 text-slate-400 whitespace-nowrap">{item.supplier}</td>
+                    <td className="px-4 py-3.5 text-slate-400 whitespace-nowrap">{item.batchNoRef}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
                       <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase ${
                         item.testResult === 'Pass' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
                         item.testResult === 'Fail' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 
@@ -432,8 +432,8 @@ export default function DashboardClient({
                         {item.testResult}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-400">{format(new Date(item.receivedDate), "dd MMM yyyy")}</td>
-                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
+                    <td className="px-4 py-3.5 text-slate-400 whitespace-nowrap">{format(new Date(item.receivedDate), "dd MMM yyyy")}</td>
+                    <td className="px-4 py-3.5 text-right flex items-center justify-end gap-2 whitespace-nowrap">
                       <button
                         onClick={() => {
                           setEditingLog(item)
@@ -468,23 +468,23 @@ export default function DashboardClient({
 
       {/* Floating Action Bar */}
       {selectedIds.size > 0 && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 glass-card border border-primary/30 px-6 py-4 rounded-full flex items-center gap-6 shadow-2xl shadow-primary/20 animate-in slide-in-from-bottom-10 fade-in duration-300">
-          <div className="text-white font-medium">
+        <div className="fixed bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 glass-card border border-primary/40 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-full flex items-center gap-3 sm:gap-6 shadow-2xl shadow-primary/30 animate-in slide-in-from-bottom-10 fade-in duration-300 z-40 bg-[#0f172a]/95 backdrop-blur-md max-w-[92vw] overflow-x-auto">
+          <div className="text-white font-medium text-xs sm:text-sm whitespace-nowrap">
             <span className="text-primary font-bold">{selectedIds.size}</span> / 4 Selected
           </div>
-          <div className="h-6 w-px bg-slate-700"></div>
+          <div className="h-5 w-px bg-slate-700 shrink-0"></div>
           <button 
             onClick={() => setIsPrintMode(true)}
-            className="flex items-center gap-2 text-primary font-medium hover:text-blue-400 transition-colors"
+            className="flex items-center gap-1.5 text-primary font-medium hover:text-blue-400 transition-colors text-xs sm:text-sm whitespace-nowrap"
           >
-            <Printer className="w-5 h-5" /> Generate Labels
+            <Printer className="w-4 h-4" /> Generate Labels
           </button>
-          <div className="h-6 w-px bg-slate-700"></div>
+          <div className="h-5 w-px bg-slate-700 shrink-0"></div>
           <button 
             onClick={handleDelete}
-            className="flex items-center gap-2 text-red-400 font-medium hover:text-red-300 transition-colors"
+            className="flex items-center gap-1.5 text-red-400 font-medium hover:text-red-300 transition-colors text-xs sm:text-sm whitespace-nowrap"
           >
-            <Trash2 className="w-5 h-5" /> Delete
+            <Trash2 className="w-4 h-4" /> Delete
           </button>
         </div>
       )}
