@@ -318,21 +318,6 @@ export default function ReportClient({ initialData, spec, sops }: { initialData:
                   </p>
                 </div>
               </div>
-
-              {/* Attached Results Drafts in Print View */}
-              {draftUrls.length > 0 && (
-                <div className="border border-black rounded-lg p-3 bg-white break-inside-avoid section-card area-card-container">
-                  <h3 className="text-[11pt] font-bold mb-2 uppercase border-b border-gray-200 pb-0.5 section-title">Attached Results Drafts</h3>
-                  <div className="grid grid-cols-3 gap-2">
-                    {draftUrls.map((url, idx) => (
-                      <div key={idx} className="border border-gray-300 rounded p-1 text-center bg-gray-50">
-                        <img src={url} alt={`Draft ${idx + 1}`} className="max-h-36 w-full object-contain mx-auto rounded" />
-                        <span className="text-[8pt] font-semibold text-gray-700 block mt-1">Results Draft #{idx + 1}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
