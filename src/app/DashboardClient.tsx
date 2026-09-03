@@ -22,6 +22,7 @@ export default function DashboardClient({
 }) {
   const [data, setData] = useState<MaterialLog[]>(initialData)
   const [search, setSearch] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isPrintMode, setIsPrintMode] = useState(false)
@@ -68,6 +69,31 @@ export default function DashboardClient({
     item.batchNoRef.toLowerCase().includes(search.toLowerCase())
   )
 
+  // Pagination logic
+  const itemsPerPage = 10
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1
+  const validCurrentPage = Math.min(currentPage, totalPages) || 1
+  const paginatedData = filteredData.slice(
+    (validCurrentPage - 1) * itemsPerPage,
+    validCurrentPage * itemsPerPage
+  )
+
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = []
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+    } else {
+      if (validCurrentPage <= 4) {
+        pages.push(1, 2, 3, 4, 5, "...", totalPages)
+      } else if (validCurrentPage >= totalPages - 3) {
+        pages.push(1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages)
+      } else {
+        pages.push(1, "...", validCurrentPage - 1, validCurrentPage, validCurrentPage + 1, "...", totalPages)
+      }
+    }
+    return pages
+  }
+
   const toggleSelect = (id: number) => {
     const newSelected = new Set(selectedIds)
     if (newSelected.has(id)) {
@@ -101,6 +127,7 @@ export default function DashboardClient({
       } else {
         const newLog = await createMaterialLog(formData)
         setData([newLog, ...data])
+        setCurrentPage(1)
       }
       setIsAddModalOpen(false)
       setEditingLog(null)
@@ -369,7 +396,10 @@ export default function DashboardClient({
             placeholder="Search materials..." 
             title="Search logs"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setCurrentPage(1)
+            }}
             className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
           />
         </div>
@@ -381,9 +411,9 @@ export default function DashboardClient({
         </button>
       </div>
 
-      <div className="glass-card rounded-2xl overflow-hidden border border-slate-700">
-        <div className="overflow-x-auto w-full">
-          <table className="w-full text-left text-sm text-slate-300 min-w-[700px]">
+      <div className="glass-card rounded-2xl border border-slate-700">
+        <div className="overflow-x-auto w-full block custom-scrollbar rounded-xl border border-slate-800">
+          <table className="w-full text-left text-sm text-slate-300 min-w-[1000px]">
             <thead className="text-xs text-slate-400 uppercase bg-slate-800/60 border-b border-slate-700">
               <tr>
                 <th className="px-4 py-3.5 text-center w-12">Select</th>
@@ -404,7 +434,7 @@ export default function DashboardClient({
                   </td>
                 </tr>
               ) : (
-                filteredData.map(item => (
+                paginatedData.map(item => (
                   <tr key={item.id} className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
                     <td className="px-4 py-3.5 text-center">
                       <div className="flex items-center justify-center">
@@ -463,6 +493,64 @@ export default function DashboardClient({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Footer Control Bar for Pagination */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 bg-slate-800/40 border-t border-slate-700/80">
+          <div className="text-xs sm:text-sm text-slate-400">
+            Showing{" "}
+            <span className="font-semibold text-slate-200">
+              {filteredData.length === 0 ? 0 : (validCurrentPage - 1) * itemsPerPage + 1}
+            </span>{" "}
+            to{" "}
+            <span className="font-semibold text-slate-200">
+              {Math.min(validCurrentPage * itemsPerPage, filteredData.length)}
+            </span>{" "}
+            of <span className="font-semibold text-slate-200">{filteredData.length}</span> materials
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400 font-medium mr-2 hidden md:inline">
+              Page {validCurrentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={validCurrentPage === 1}
+              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-800 disabled:cursor-not-allowed text-slate-300 rounded-lg text-xs font-semibold transition-colors border border-slate-700"
+            >
+              Previous
+            </button>
+
+            <div className="flex items-center gap-1">
+              {getPageNumbers().map((page, index) => (
+                typeof page === 'number' ? (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      validCurrentPage === page
+                        ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                        : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ) : (
+                  <span key={index} className="px-2 py-1 text-slate-500 text-xs">
+                    {page}
+                  </span>
+                )
+              ))}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={validCurrentPage >= totalPages || filteredData.length === 0}
+              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-800 disabled:cursor-not-allowed text-slate-300 rounded-lg text-xs font-semibold transition-colors border border-slate-700"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
 
